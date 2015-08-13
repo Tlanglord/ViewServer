@@ -11,18 +11,6 @@ name := "viewserver"
 organization := "com.hanhuy.android"
 version := "1.0.3"
 
-javacOptions in (Compile,doc) ~= { options =>
-  options.foldLeft((false, List.empty[String])) {
-    case ((skip, a), x) =>
-      if (skip)
-        (false, a)
-      else {
-        val skipnext = x == "-target"
-        (skipnext, if (!skipnext) x :: a else a)
-      }
-  }._2.reverse
-
-}
 javacOptions in (Compile,doc) += "-Xdoclint:none"
 
 platformTarget in Android := "android-19"
