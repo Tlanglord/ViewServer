@@ -1,29 +1,31 @@
-import android.Keys._
 import collection.JavaConversions._
 
+androidBuildJar
+minSdkVersion in Android := "4"
+
 crossPaths := false
-
 autoScalaLibrary := false
-
 javacOptions ++= Seq("-source", "1.6", "-target", "1.6")
 
 name := "viewserver"
-
 organization := "com.hanhuy.android"
+version := "1.0.3"
 
-version := "1.0.2"
+javacOptions in (Compile,doc) ~= { options =>
+  options.foldLeft((false, List.empty[String])) {
+    case ((skip, a), x) =>
+      if (skip)
+        (false, a)
+      else {
+        val skipnext = x == "-target"
+        (skipnext, if (!skipnext) x :: a else a)
+      }
+  }._2.reverse
 
-dependencyClasspath in (Compile,doc) ++= (builder in Android).value.getBootClasspath map Attributed.blank
-
-javacOptions in (Compile,doc) := Seq("-Xdoclint:none")
+}
+javacOptions in (Compile,doc) += "-Xdoclint:none"
 
 platformTarget in Android := "android-19"
-
-debugIncludesTests in Android := false
-
-publishArtifact in (Compile,packageBin) := true
-
-publishArtifact in (Compile,packageSrc) := true
 
 // sonatype publishing options follow
 publishMavenStyle := true
@@ -36,6 +38,9 @@ publishTo := {
     Some("releases"  at nexus + "service/local/staging/deploy/maven2")
 }
 
+licenses := Seq("BSD-style" -> url("http://www.opensource.org/licenses/bsd-license.php"))
+
+homepage := Some(url("https://github.com/pfn/ViewServer"))
 pomIncludeRepository := { _ => false }
 
 pomExtra :=
@@ -51,6 +56,3 @@ pomExtra :=
     </developer>
   </developers>
 
-licenses := Seq("BSD-style" -> url("http://www.opensource.org/licenses/bsd-license.php"))
-
-homepage := Some(url("https://github.com/pfn/ViewServer"))
